@@ -1,0 +1,461 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* اتجاه RTL */
+:root {
+  direction: rtl;
+
+  /* نيلي / كحلي — بدل الأزرق السماوي */
+  --lt-navy-deep: #1a2238;
+  --lt-navy-mid: #243152;
+  --lt-navy-soft: #2e3d62;
+  --lt-navy-accent: #3a4a72;
+  --lt-navy-ink: #2a3552;
+  --lt-navy-muted: #5c667d;
+  --lt-navy-strong: #2d3958;
+
+  /* Legal Tech — داكن + توهج دافئ / تركوازي */
+  --lt-bg0: #070b12;
+  --lt-bg1: #0c1424;
+  --lt-bg2: #0f172a;
+  --lt-text: #e8edf4;
+  --lt-text-muted: rgba(232, 237, 244, 0.62);
+  --lt-glass: rgba(255, 255, 255, 0.07);
+  --lt-glass-strong: rgba(255, 255, 255, 0.11);
+  --lt-glass-border: rgba(255, 255, 255, 0.14);
+  --lt-glass-highlight: rgba(255, 255, 255, 0.22);
+  --lt-blur: 18px;
+  --lt-radius-lg: 22px;
+  --lt-radius-md: 16px;
+  --lt-radius-pill: 999px;
+  --lt-glow-warm: rgba(251, 146, 60, 0.28);
+  --lt-glow-amber: rgba(245, 158, 11, 0.32);
+  --lt-glow-cyan: rgba(34, 211, 238, 0.18);
+  --lt-glow-violet: rgba(139, 92, 246, 0.15);
+  --lt-accent: #fbbf24;
+  --lt-accent-soft: rgba(251, 191, 36, 0.9);
+
+  --nav-bar-bg: rgba(22, 28, 48, 0.78);
+  --nav-bar-border: rgba(120, 140, 190, 0.22);
+  --nav-bar-shadow:
+    0 -8px 40px rgba(0, 0, 0, 0.35),
+    0 0 32px rgba(251, 146, 60, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --nav-bar-blur: blur(20px);
+  --nav-item-color: rgba(196, 206, 232, 0.58);
+  --nav-item-active-color: #fde68a;
+  --nav-item-active-bg: rgba(255, 255, 255, 0.08);
+  --nav-item-active-shadow:
+    0 0 20px rgba(251, 191, 36, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --nav-icon-active-bg: rgba(255, 255, 255, 0.1);
+  --nav-icon-active-border: rgba(255, 255, 255, 0.18);
+  --nav-icon-active-shadow:
+    0 0 22px rgba(34, 211, 238, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+html[data-theme='light'] {
+  --lt-bg0: #e8ecf4;
+  --lt-bg1: #eef2f8;
+  --lt-bg2: #e2e8f0;
+  --lt-text: #0f172a;
+  --lt-text-muted: rgba(15, 23, 42, 0.62);
+  --lt-glass: rgba(255, 255, 255, 0.88);
+  --lt-glass-strong: rgba(255, 255, 255, 0.95);
+  --lt-glass-border: rgba(42, 54, 88, 0.14);
+  --lt-glass-highlight: rgba(42, 54, 88, 0.22);
+
+  --nav-bar-bg: linear-gradient(180deg, #eef0f7 0%, #e4e9f3 100%);
+  --nav-bar-border: rgba(42, 54, 88, 0.14);
+  --nav-bar-shadow: 0 4px 22px rgba(26, 34, 56, 0.1);
+  --nav-bar-blur: blur(0);
+  --nav-item-color: var(--lt-navy-muted);
+  --nav-item-active-color: var(--lt-navy-ink);
+  --nav-item-active-bg: rgba(42, 54, 88, 0.1);
+  --nav-item-active-shadow: none;
+  --nav-icon-active-bg: rgba(42, 54, 88, 0.12);
+  --nav-icon-active-border: rgba(42, 54, 88, 0.22);
+  --nav-icon-active-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100%;
+  font-family: 'Tajawal', sans-serif;
+  color: var(--lt-text);
+  background: var(--lt-bg0);
+}
+
+/* توهج خلفية ثابت (مثل صورة المرجع) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(ellipse 100% 70% at 100% 0%, var(--lt-glow-warm), transparent 52%),
+    radial-gradient(ellipse 80% 60% at 0% 100%, var(--lt-glow-cyan), transparent 55%),
+    radial-gradient(ellipse 60% 50% at 50% 40%, var(--lt-glow-violet), transparent 65%),
+    linear-gradient(168deg, var(--lt-bg1) 0%, var(--lt-bg2) 42%, #0a1628 100%);
+}
+
+html[data-theme='light'] body::before {
+  background:
+    radial-gradient(ellipse 100% 70% at 100% 0%, rgba(55, 65, 120, 0.12), transparent 52%),
+    radial-gradient(ellipse 80% 60% at 0% 100%, rgba(42, 54, 95, 0.1), transparent 55%),
+    linear-gradient(168deg, #f8fafc 0%, #e8ecf4 52%, #e2e8f0 100%);
+}
+
+#app {
+  max-width: 420px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  z-index: 0;
+}
+
+/* لوح زجاجي عام */
+.lt-glass {
+  background: var(--lt-glass);
+  -webkit-backdrop-filter: blur(var(--lt-blur));
+  backdrop-filter: blur(var(--lt-blur));
+  border: 1px solid var(--lt-glass-border);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* زر عريض مثل «Visit site» — شفاف رمادي زجاجي */
+.lt-btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 14px 22px;
+  border: none;
+  border-radius: var(--lt-radius-pill);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  color: #0f172a;
+  background: rgba(148, 163, 184, 0.38);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+.lt-btn-pill:hover {
+  box-shadow:
+    0 6px 28px rgba(251, 146, 60, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.lt-btn-pill:active {
+  transform: scale(0.98);
+}
+
+.lt-btn-pill:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* زر مميز بتوهج دافئ (CTA) */
+.lt-btn-pill-warm {
+  color: #1a1206;
+  background: linear-gradient(
+    135deg,
+    rgba(251, 191, 36, 0.92) 0%,
+    rgba(245, 158, 11, 0.88) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 0 28px var(--lt-glow-amber),
+    0 6px 20px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.lt-btn-pill-warm:hover {
+  box-shadow:
+    0 0 36px rgba(251, 146, 60, 0.45),
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* زر ثانوي — إطار زجاجي */
+.lt-btn-outline-glass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: var(--lt-radius-pill);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--lt-text);
+  background: rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--lt-glass-highlight);
+  transition: background 0.15s ease;
+}
+
+.lt-btn-outline-glass:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* أيقونة داخل دائرة زجاجية (مثل الأيقونات الطافية) */
+.lt-icon-orbit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 0 20px rgba(34, 211, 238, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  font-size: 1.35rem;
+}
+
+/* بطاقة خدمة — شكل squircle */
+.lt-squircle {
+  border-radius: 22px;
+}
+
+.lt-section-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--lt-text);
+  text-align: right;
+}
+
+/* صفحات زجاجية — وضع نهاري */
+html[data-theme='light'] .legal-surface .header {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(42, 54, 88, 0.12);
+  box-shadow: 0 8px 24px rgba(26, 34, 56, 0.08);
+}
+
+html[data-theme='light'] .legal-surface .header h1,
+html[data-theme='light'] .legal-surface .header h2 {
+  color: var(--lt-navy-ink);
+}
+
+html[data-theme='light'] .legal-surface .header-back-btn,
+html[data-theme='light'] .legal-surface .back-btn {
+  background: #f1f5f9;
+  color: var(--lt-navy-ink);
+  border-color: rgba(42, 54, 88, 0.15);
+}
+
+html[data-theme='light'] .legal-surface .dot {
+  color: rgba(42, 54, 88, 0.35);
+}
+
+html[data-theme='light'] .legal-surface .bell {
+  background: #f1f5f9;
+  border-color: rgba(42, 54, 88, 0.15);
+}
+
+html[data-theme='light'] .legal-surface .greeting {
+  color: #334155;
+}
+
+html[data-theme='light'] .legal-surface .section-title {
+  color: var(--lt-navy-ink);
+}
+
+html[data-theme='light'] .legal-surface .card {
+  background: #ffffff;
+  border: 1px solid rgba(42, 54, 88, 0.1);
+  box-shadow: 0 4px 16px rgba(26, 34, 56, 0.06);
+}
+
+html[data-theme='light'] .legal-surface .card-title {
+  color: #0f172a;
+}
+
+html[data-theme='light'] .legal-surface .card-time,
+html[data-theme='light'] .legal-surface .card-hint {
+  color: var(--lt-navy-muted);
+}
+
+html[data-theme='light'] .legal-surface .empty-hint {
+  color: var(--lt-navy-muted);
+  background: #f1f5f9;
+  border-color: rgba(42, 54, 88, 0.08);
+}
+
+html[data-theme='light'] .legal-surface .fetch-err {
+  color: #b91c1c;
+  background: rgba(248, 113, 113, 0.12);
+  border-color: rgba(248, 113, 113, 0.25);
+}
+
+html[data-theme='light'] .legal-surface .back-step-btn {
+  background: #ffffff;
+  color: var(--lt-navy-ink);
+  border-color: rgba(42, 54, 88, 0.2);
+}
+
+html[data-theme='light'] .legal-surface .profile-wrap h2 {
+  color: #0f172a;
+}
+
+html[data-theme='light'] .legal-surface .profile-wrap p {
+  color: var(--lt-navy-muted);
+}
+
+html[data-theme='light'] .legal-surface .avatar {
+  background: #e8eaf4;
+  color: var(--lt-navy-ink);
+  border-color: rgba(42, 54, 88, 0.2);
+}
+
+html[data-theme='light'] .legal-surface .menu-card {
+  background: #ffffff;
+  border-color: rgba(42, 54, 88, 0.12);
+  box-shadow: 0 4px 20px rgba(26, 34, 56, 0.06);
+}
+
+html[data-theme='light'] .legal-surface .menu-title {
+  color: #0f172a;
+}
+
+html[data-theme='light'] .legal-surface .divider {
+  background: rgba(42, 54, 88, 0.1);
+}
+
+html[data-theme='light'] .legal-surface .arrow {
+  color: var(--lt-navy-accent);
+}
+
+html[data-theme='light'] .legal-surface .notif-strip {
+  background: #e8eaf4;
+  border-color: rgba(42, 54, 88, 0.2);
+  color: var(--lt-navy-ink);
+}
+
+html[data-theme='light'] .legal-surface .admin-assign-btn {
+  border-color: rgba(42, 54, 88, 0.32);
+  background: rgba(42, 54, 88, 0.06);
+  color: var(--lt-navy-strong);
+}
+
+html[data-theme='light'] .legal-surface .logout {
+  border-color: rgba(220, 38, 38, 0.35);
+  color: #b91c1c;
+  background: rgba(248, 113, 113, 0.08);
+}
+
+html[data-theme='light'] .legal-surface .theme-row {
+  background: #ffffff;
+  border-color: rgba(42, 54, 88, 0.12);
+}
+
+html[data-theme='light'] .legal-surface .theme-row > span:first-child {
+  color: #0f172a;
+}
+
+html[data-theme='light'] .legal-surface .theme-seg {
+  border-color: rgba(42, 54, 88, 0.22);
+}
+
+html[data-theme='light'] .legal-surface .theme-seg button {
+  color: var(--lt-navy-muted);
+}
+
+html[data-theme='light'] .legal-surface .theme-seg button.active {
+  background: rgba(42, 54, 88, 0.12);
+  color: var(--lt-navy-strong);
+}
+
+html[data-theme='light'] .legal-surface h2.section-title,
+html[data-theme='light'] .legal-surface .contracts-section .section-title {
+  color: var(--lt-navy-ink);
+}
+
+html[data-theme='light'] .legal-surface .archive-heading {
+  color: #475569;
+}
+
+html[data-theme='light'] .legal-surface .archive-desc {
+  color: var(--lt-navy-muted);
+}
+
+html[data-theme='light'] .legal-surface .list-card {
+  background: #ffffff;
+  border: 1px solid rgba(42, 54, 88, 0.1);
+  box-shadow: 0 4px 16px rgba(26, 34, 56, 0.06);
+}
+
+html[data-theme='light'] .legal-surface .contract-row .title {
+  color: #0f172a;
+}
+
+html[data-theme='light'] .legal-surface .contract-row .meta {
+  color: var(--lt-navy-muted);
+}
+
+html[data-theme='light'] .legal-surface .hint {
+  color: var(--lt-navy-muted);
+}
+
+html[data-theme='light'] .legal-surface .mark-all {
+  background: #e8eaf4;
+  color: var(--lt-navy-strong);
+  border: 1px solid rgba(42, 54, 88, 0.22);
+}
+
+html[data-theme='light'] .legal-surface .card-head h3 {
+  color: #0f172a;
+}
+
+html[data-theme='light'] .legal-surface .card .time {
+  color: var(--lt-navy-muted);
+}
+
+html[data-theme='light'] .legal-surface .hero-card {
+  background: #ffffff;
+  border-color: rgba(42, 54, 88, 0.12);
+}
+
+html[data-theme='light'] .legal-surface .hero-card h2,
+html[data-theme='light'] .legal-surface .case-title {
+  color: #0f172a;
+}
+
+html[data-theme='light'] .legal-surface .case-meta .case-status {
+  color: var(--lt-navy-strong);
+}
+
+html[data-theme='light'] .legal-surface .case-desc,
+html[data-theme='light'] .legal-surface .spec,
+html[data-theme='light'] .legal-surface .rating-meta {
+  color: #475569;
+}
+
+html[data-theme='light'] .legal-surface .muted {
+  color: var(--lt-navy-muted);
+}
