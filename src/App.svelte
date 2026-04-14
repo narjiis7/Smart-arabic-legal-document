@@ -107,7 +107,9 @@
       <strong>وضع تطوير الواجهة فقط.</strong>
       الباكند معطّل مؤقتاً (<code>VITE_FRONTEND_ONLY=true</code>)؛ التنقّل والنماذج تعمل ببيانات تجريبية.
       لإعادة الربط: احذف أو اجعل <code>VITE_FRONTEND_ONLY=false</code>، أعد تفعيل
-      <code>VITE_API_BASE_URL</code>، ثم أوقف وأعد تشغيل <code>npm run dev</code>.
+      <code>VITE_API_BASE_URL</code>{#if import.meta.env.PROD}
+        في متغيرات Vercel ثم <strong>Redeploy</strong>{:else}، ثم أوقف وأعد تشغيل
+        <code>npm run dev</code>{/if}.
     </p>
     <button type="button" class="frontend-only-dismiss" on:click={dismissApiSetupBanner}>
       أخفِ الشريط
@@ -117,19 +119,29 @@
   <div class="api-setup-banner" dir="rtl">
     <p>
       <strong>الربط بالخادم غير مضبوط.</strong>
-      أضف في ملف <code>.env</code> بجانب <code>package.json</code> سطراً مثل:
-      <code>VITE_API_BASE_URL=https://your-server.com</code>
-      (بدون <code>/</code> في النهاية وبدون <code>/swagger</code>)، ثم أوقف وأعد تشغيل
-      <code>npm run dev</code>.
+      {#if import.meta.env.PROD}
+        على الاستضافة (مثل Vercel): من <strong>Settings → Environment Variables</strong> أضف
+        <code>VITE_API_BASE_URL=https://your-server.com</code>
+        (بدون <code>/</code> في النهاية وبدون <code>/swagger</code>) لبيئة
+        <strong>Production</strong> (وPreview إن احتجت)، ثم من <strong>Deployments</strong> نفّذ
+        <strong>Redeploy</strong> — لأن قيم <code>VITE_*</code> تُدمَج وقت البناء وليس بعده.
+      {:else}
+        أضف في ملف <code>.env</code> بجانب <code>package.json</code> سطراً مثل:
+        <code>VITE_API_BASE_URL=https://your-server.com</code>
+        (بدون <code>/</code> في النهاية وبدون <code>/swagger</code>)، ثم أوقف وأعد تشغيل
+        <code>npm run dev</code>.
+      {/if}
     </p>
-    <p class="api-setup-alt">
-      أو في التطوير المحلي فقط: اترك العنوان فارغاً واضبط
-      <code>VITE_API_PROXY_TARGET=https://localhost:7001</code>
-      حتى يمرّر Vite طلبات <code>/api</code> للباكند.
-    </p>
+    {#if !import.meta.env.PROD}
+      <p class="api-setup-alt">
+        أو في التطوير المحلي فقط: اترك العنوان فارغاً واضبط
+        <code>VITE_API_PROXY_TARGET=https://localhost:7001</code>
+        حتى يمرّر Vite طلبات <code>/api</code> للباكند.
+      </p>
+    {/if}
     <p class="api-setup-alt">
       أو لو تريد إكمال الصفحات بدون باكند: <code>VITE_FRONTEND_ONLY=true</code> (انظر
-      <code>.env.example</code>).
+      <code>.env.example</code>){#if import.meta.env.PROD}؛ أضفه في متغيرات Vercel ثم أعد النشر.{/if}.
     </p>
     <button type="button" class="api-setup-dismiss" on:click={dismissApiSetupBanner}>
       فهمت، أخفِ التنبيه

@@ -9,19 +9,14 @@
     <h1>توقيع العقد</h1>
   </div>
   <div class="content">
-    <p class="lead">
-      هذه الصفحة مفتوحة من الرابط الذي يبنيه التطبيق:
-      <code>/signing/…</code> كما في Swagger (<code>origin + '/signing/' + signingToken</code>).
-    </p>
     {#if token}
       <div class="card">
-        <span class="label">رمز الجلسة</span>
+        <span class="label">رمز التوقيع</span>
         <code class="token">{token}</code>
       </div>
+    {:else}
+      <p class="muted">لا يوجد رابط توقيع صالح.</p>
     {/if}
-    <p class="hint">
-      اربط هذه الصفحة لاحقاً بواجهة التوقيع الفعلية (OTP، رفع توقيع، إلخ) حسب ما يوفّره الباكند.
-    </p>
     <button class="btn" type="button" on:click={onGoHome}>العودة للرئيسية</button>
   </div>
 </div>
@@ -60,12 +55,12 @@
     width: 100%;
     box-sizing: border-box;
   }
-  .lead,
-  .hint {
+  .muted {
     margin: 0;
     font-size: 14px;
     line-height: 1.55;
-    color: rgba(226, 232, 240, 0.65);
+    color: rgba(226, 232, 240, 0.55);
+    text-align: center;
   }
   .card {
     background: rgba(255, 255, 255, 0.07);
