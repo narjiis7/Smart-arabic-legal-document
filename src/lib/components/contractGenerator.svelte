@@ -446,7 +446,7 @@
     return null;
   }
 
-  async function generateContract() {
+  async function generateContractAfterPayment() {
     feedback = '';
     const localUiOnly = !isApiConfigured() && useMockAuth();
 
@@ -592,6 +592,28 @@
         (e && typeof e.message === 'string' && e.message) ||
         'تعذّر إنشاء العقد أو إكمال الدفع. تحقّق من الجلسة ومن عنوان الخادم في الإعدادات.';
     }
+  }
+
+  function generateContract() {
+    const fee = PAYMENT_FEES_IQD.contractGenerate;
+    if (typeof onProceedToPayment === 'function') {
+      onProceedToPayment(
+        {
+          kind: 'contract',
+          title: 'دفع إصدار العقد',
+          amountIqd: fee,
+          subtitle: 'بطاقة كي كارد / سوبر كي — بعد الدفع يتم توليد العقد',
+          originPage: 'contract-generator',
+          afterPay: 'contracts',
+        },
+        async () => {
+          await generateContractAfterPayment();
+          return true;
+        },
+      );
+      return;
+    }
+    void generateContractAfterPayment();
   }
 </script>
 

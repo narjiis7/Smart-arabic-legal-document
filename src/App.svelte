@@ -37,6 +37,8 @@
 
   /** @type {null | { kind: string; title: string; amountIqd?: number; amountUsd?: number; subtitle?: string; contractId?: string | number | null; originPage: string; afterPay: string }} */
   let paymentContext = null;
+  /** يُنفّذ بعد نجاح شاشة الدفع (مثلاً: إنشاء طلب/عقد على الخادم). */
+  let paymentAfterSuccessAction = /** @type {null | (() => Promise<boolean | void> | boolean | void)} */ (null);
 
   let hideApiSetupBanner = false;
   const API_CFG_DISMISS = 'legal_app_hide_api_cfg';
@@ -66,19 +68,38 @@
 
   function openPaymentCheckout(
     /** @type {{ kind: string; title: string; amountIqd?: number; amountUsd?: number; subtitle?: string; contractId?: string | number | null; originPage: string; afterPay: string }} */ ctx,
+    /** @type {null | (() => Promise<boolean | void> | boolean | void)} */ afterSuccessAction = null,
   ) {
     paymentContext = ctx;
+    paymentAfterSuccessAction = afterSuccessAction;
     currentPage = 'payment';
   }
 
   function handlePaymentBack() {
     const p = paymentContext;
     paymentContext = null;
+    paymentAfterSuccessAction = null;
     currentPage = p?.originPage || 'home';
   }
 
-  function handlePaymentSuccess() {
+  async function handlePaymentSuccess() {
     const ctx = paymentContext;
+    const afterSuccessAction = paymentAfterSuccessAction;
+    paymentAfterSuccessAction = null;
+    if (typeof afterSuccessAction === 'function') {
+      try {
+        const ok = await afterSuccessAction();
+        if (ok === false) {
+          paymentContext = null;
+          currentPage = ctx?.originPage || 'home';
+          return;
+        }
+      } catch {
+        paymentContext = null;
+        currentPage = ctx?.originPage || 'home';
+        return;
+      }
+    }
     if (ctx?.kind === 'consult-ai-day') setConsultSubscription('day');
     if (ctx?.kind === 'consult-ai-month') setConsultSubscription('month');
     if (ctx?.kind === 'contract' && typeof sessionStorage !== 'undefined') {
@@ -184,6 +205,7 @@
     onNavContracts={() => (currentPage = 'contracts')}
     onNavNotifications={() => (currentPage = 'notifications')}
     onNavProfile={() => (currentPage = 'profile')}
+    onProceedToPayment={(ctx, afterSuccessAction) => openPaymentCheckout(ctx, afterSuccessAction)}
     onSubmitted={() => (currentPage = 'requests')}
   />
 {:else if currentPage === 'requests'}

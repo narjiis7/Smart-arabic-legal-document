@@ -19,6 +19,11 @@
   export let onNavContracts = () => {};
   export let onNavNotifications = () => {};
   export let onNavProfile = () => {};
+  /** فتح شاشة الدفع قبل إرسال الطلب (مثل التدفق السابق). */
+  export let onProceedToPayment = (
+    /** @type {{ kind: string; title: string; amountIqd?: number; subtitle?: string; originPage: string; afterPay: string }} */ _ctx,
+    /** @type {() => Promise<boolean | void> | boolean | void} */ _afterSuccessAction,
+  ) => {};
   /** بعد إتمام الدفع وإنشاء الطلب على الخادم — الانتقال لطلباتي */
   export let onSubmitted = () => {};
 
@@ -58,7 +63,7 @@
       return;
     }
     if ($session.isLoggedIn) {
-      sendRequest(type);
+      proceedWithPaymentThenSubmit(type);
     } else {
       pendingType = type;
       showPopup = true;
@@ -75,7 +80,7 @@
       email = '';
       password = '';
       pendingType = '';
-      if (t === 'normal' || t === 'urgent') await sendRequest(t);
+      if (t === 'normal' || t === 'urgent') proceedWithPaymentThenSubmit(t);
     } catch (e) {
       if (e?.code === 'NO_API_BASE') {
         loginError =
@@ -91,6 +96,30 @@
       }
     }
     loginLoading = false;
+  }
+
+  function proceedWithPaymentThenSubmit(type) {
+    const fee =
+      type === 'urgent' ? PAYMENT_FEES_IQD.lawyerRequestUrgent : PAYMENT_FEES_IQD.lawyerRequestNormal;
+    const kind = type === 'urgent' ? 'lawyer-request-urgent' : 'lawyer-request-normal';
+    if (typeof onProceedToPayment === 'function') {
+      onProceedToPayment(
+        {
+          kind,
+          title: type === 'urgent' ? 'دفع طلب استشارة عاجل' : 'دفع طلب استشارة',
+          amountIqd: fee,
+          subtitle: 'بطاقة كي كارد / سوبر كي — بعد الدفع يتم إرسال الطلب',
+          originPage: 'request',
+          afterPay: 'requests',
+        },
+        async () => {
+          await sendRequest(type);
+          return true;
+        },
+      );
+      return;
+    }
+    void sendRequest(type);
   }
 
   function closeLoginPopup() {
