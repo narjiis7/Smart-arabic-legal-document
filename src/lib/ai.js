@@ -65,11 +65,7 @@ ${problem}`;
 
   if (useMiniBackend) {
     const data = await miniAiChat({ message: userContent });
-    let text = data.reply || '';
-    const extras = [];
-    if (data.suggestedServiceType) extras.push(`نوع خدمة مقترح: ${data.suggestedServiceType}`);
-    if (data.suggestedAction) extras.push(`إجراء مقترح: ${data.suggestedAction}`);
-    if (extras.length) text += (text ? '\n\n' : '') + extras.join('\n');
+    const text = data.reply || '';
     if (!text.trim()) {
       throw new Error('الخادم لم يُرجع نصاً في حقل reply');
     }

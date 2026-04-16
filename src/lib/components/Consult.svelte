@@ -4,7 +4,6 @@
   import {
     getConsultAccessState,
     markFreeConsultUsed,
-    resetConsultAccessForDemo,
   } from '../consultAccess.js';
   import { CONSULT_AI_USD } from '../paymentFees.js';
   import AppBottomNav from './appBottomNav.svelte';
@@ -33,10 +32,6 @@
   let showResult = false;
   let askError = '';
 
-  /** زر إعادة الضبط: يظهر مع `npm run dev` أو عند VITE_SHOW_CONSULT_RESET=true */
-  const showConsultDemoReset =
-    import.meta.env.DEV || import.meta.env.VITE_SHOW_CONSULT_RESET === 'true';
-
   function formatUntil(ts) {
     try {
       return new Date(ts).toLocaleDateString('ar-IQ', {
@@ -61,7 +56,7 @@
 
     const snap = getConsultAccessState();
     if (snap.mode === 'locked') {
-      askError = 'انتهت إجابتك المجانية. اختر إحدى الباقات أدناه للمتابعة.';
+      askError = 'انتهت الاستشارتان المجانيتان لهذا الأسبوع. اختر إحدى الباقات أدناه للمتابعة.';
       return;
     }
 
@@ -75,7 +70,7 @@
         urgency: 'normal',
       });
       showResult = true;
-      if (snap.mode === 'one_free') markFreeConsultUsed();
+      if (snap.mode === 'free_weekly') markFreeConsultUsed();
       refreshAccess();
     } catch (e) {
       const m = e && typeof e.message === 'string' ? e.message : '';
@@ -100,13 +95,6 @@
     refreshAccess();
   }
 
-  function demoResetConsult() {
-    resetConsultAccessForDemo();
-    showResult = false;
-    message = '';
-    askError = '';
-    refreshAccess();
-  }
 </script>
 
 <div class="page">
@@ -132,17 +120,17 @@
           {#if access.mode === 'unlimited'}
             سؤال جديد
           {:else}
-            العودة / الاشتراك للأسئلة الإضافية
+            استشارة جديدة
           {/if}
         </button>
       </div>
     {:else if access.mode === 'locked'}
       <div class="intro-card paywall-intro">
         <div class="intro-icon">🔒</div>
-        <h2>انتهت إجابتك المجانية</h2>
+        <h2>انتهت الاستشارتان المجانيتان لهذا الأسبوع</h2>
         <p>
-          المساعد الإجرائي يقدّم <strong>إجابة واحدة مجانية</strong> لكل مستخدم. للمتابعة وطرح أسئلة غير
-          محدودة اختر باقة بالدولار:
+          المساعد الإجرائي يقدّم <strong>استشارتين مجانيتين أسبوعياً</strong>. بعد استهلاكهما يمكنك
+          المتابعة عبر باقة مدفوعة:
         </p>
       </div>
 
@@ -172,11 +160,12 @@
         <p>اكتب مشكلتك وسأخبرك بالخطوات والأوراق المطلوبة — بدون حلول قانونية كاملة</p>
       </div>
 
-      {#if access.mode === 'one_free'}
+      {#if access.mode === 'free_weekly'}
         <div class="tier-banner free">
           <span class="tier-dot"></span>
           <span
-            ><strong>إجابة واحدة مجانية</strong> — بعدها: <span dir="ltr">${CONSULT_AI_USD.dayPass}</span> يوم /
+            ><strong>المجاني هذا الأسبوع:</strong> متبقي {access.remaining} من {access.limit} —
+            بعدها: <span dir="ltr">${CONSULT_AI_USD.dayPass}</span> يوم /
             <span dir="ltr">${CONSULT_AI_USD.monthPass}</span> شهرياً</span
           >
         </div>
@@ -208,17 +197,6 @@
           🔍 اعرف خطواتك
         {/if}
       </button>
-    {/if}
-
-    {#if showConsultDemoReset}
-      <div class="demo-reset-wrap">
-        <button type="button" class="demo-reset-btn" on:click={demoResetConsult}>
-          إعادة ضبط الاستشارة (تدريب / عرض)
-        </button>
-        <p class="demo-reset-hint">
-          يعيد الإجابة المجانية ويزيل اشتراك اليوم/الشهر المحفوظ في هذا المتصفح فقط.
-        </p>
-      </div>
     {/if}
 
   </div>
@@ -528,33 +506,5 @@
     font-weight: 800;
     cursor: pointer;
     width: calc(100% - 32px);
-  }
-  .demo-reset-wrap {
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 1px dashed rgba(255, 255, 255, 0.12);
-    text-align: center;
-  }
-  .demo-reset-btn {
-    border: 1px dashed rgba(201, 168, 76, 0.55);
-    background: rgba(201, 168, 76, 0.08);
-    color: #c9a84c;
-    border-radius: 12px;
-    padding: 10px 14px;
-    font-size: 13px;
-    font-family: inherit;
-    font-weight: 700;
-    cursor: pointer;
-    width: 100%;
-    max-width: 320px;
-  }
-  .demo-reset-btn:hover {
-    background: rgba(201, 168, 76, 0.14);
-  }
-  .demo-reset-hint {
-    margin: 8px 0 0;
-    font-size: 11px;
-    line-height: 1.5;
-    color: #6b7588;
   }
 </style>
