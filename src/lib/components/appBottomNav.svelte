@@ -13,7 +13,6 @@
 
   const items = [
     { id: 'home', icon: '🏠', label: 'الرئيسية', action: () => onNavHome() },
-    { id: 'contracts', icon: '📜', label: 'عقودي', action: () => onNavContracts() },
     { id: 'notifications', icon: '🔔', label: 'إشعارات', action: () => onNavNotifications(), badge: true },
     { id: 'profile', icon: '👤', label: 'حسابي', action: () => onNavProfile() },
   ];
